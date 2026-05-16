@@ -2,10 +2,8 @@
 
 {
   services.xserver.enable = true;
-
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
-
   services.desktopManager.plasma6.enable = true;
 
   console.keyMap = "fr";
@@ -21,6 +19,4 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
-  services.printing.enable = true;
 }
