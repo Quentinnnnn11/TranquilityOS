@@ -1,0 +1,43 @@
+{ config, pkgs, inputs, ... }:
+
+{
+  imports =
+    [
+      ./hardware-configuration.nix
+      ./common/desktop.nix
+      ./common/packages.nix
+    ];
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  networking.hostName = "TranquilityOS";
+  networking.networkmanager.enable = true;
+
+  time.timeZone = "Europe/Paris";
+  i18n.defaultLocale = "fr_FR.UTF-8";
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "fr_FR.UTF-8";
+    LC_IDENTIFICATION = "fr_FR.UTF-8";
+    LC_MEASUREMENT = "fr_FR.UTF-8";
+    LC_MONETARY = "fr_FR.UTF-8";
+    LC_NAME = "fr_FR.UTF-8";
+    LC_NUMERIC = "fr_FR.UTF-8";
+    LC_PAPER = "fr_FR.UTF-8";
+    LC_TELEPHONE = "fr_FR.UTF-8";
+    LC_TIME = "fr_FR.UTF-8";
+  };
+
+  users.users.quentin = {
+    isNormalUser = true;
+    description = "Quentin";
+    extraGroups = [ "networkmanager" "wheel" ];
+    packages = with pkgs; [];
+  };
+
+  services.openssh.enable = true;
+
+  system.stateVersion = "25.11";
+  
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+}
