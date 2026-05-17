@@ -150,7 +150,7 @@ git add -f local-config.nix
 cd -
 
 echo "Lancement de la compilation du système..."
-nixos-install --flake /mnt/etc/nixos#TranquilityOS
+nixos-install --no-root-passwd --flake /mnt/etc/nixos#TranquilityOS
 
 echo "=================================================="
 echo "Installation terminée avec succès !"
