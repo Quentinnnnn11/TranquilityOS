@@ -22,9 +22,68 @@ if [[ "$JOIN_AD" =~ ^[oO]$ ]]; then
   echo ""
 fi
 
-echo "Préparation du disque principal..."
-# Ici tu mettras ta logique de partitionnement (parted, mkfs.ext4, etc.)
-# Pour l'exemple, on suppose que la cible est montée sur /mnt
+echo "=================================================="
+echo "DISQUES DISPONIBLES :"
+lsblk -d -n -o NAME,SIZE,MODEL | grep -v "loop"
+
+echo ""
+echo "ATTENTION : TOUTES LES DONNÉES DU DISQUE CIBLE SERONT DÉTRUITES !"
+read -p "Entrez le nom du disque à formater (ex: sda ou nvme0n1) : " DISK_NAME
+read -p "Voulez-vous activer la prise en charge de l'hibernation ? (o/N) : " HIBERNATION
+
+if [[ $DISK_NAME == *nvme* ]]; then
+  PART_SUFFIX="p"
+else
+  PART_SUFFIX=""
+fi
+TARGET_DISK="/dev/$DISK_NAME"
+
+RAM_GB=$(awk '/MemTotal/ {printf "%.0f", $2/1024/1024}' /proc/meminfo)
+
+if [ "$RAM_GB" -eq 0 ]; then RAM_GB=1; fi
+
+if [[ "$HIBERNATION" =~ ^[oO]$ ]]; then
+  if [ "$RAM_GB" -le 4 ]; then
+    SWAP_GB=$(( RAM_GB * 2 ))
+  elif [ "$RAM_GB" -lt 32 ]; then
+    SWAP_GB=$(( RAM_GB + 2 ))
+  else
+    SWAP_GB=$RAM_GB
+  fi
+  echo "Analyse matérielle : RAM détectée = ${RAM_GB} Go. Configuration d'un Swap de ${SWAP_GB} Go, avec hybernation."
+else
+  if [ "$RAM_GB" -le 2 ]; then
+    SWAP_GB=$(( RAM_GB * 2 ))
+  elif [ "$RAM_GB" -le 8 ]; then
+    SWAP_GB=$RAM_GB
+  else
+    SWAP_GB=4
+  fi
+  echo "Analyse matérielle : RAM détectée = ${RAM_GB} Go. Configuration d'un Swap de ${SWAP_GB} Go, sans hybernation."
+fi
+
+EFI_END=512
+SWAP_END=$(( EFI_END + (SWAP_GB * 1024) ))
+
+echo "Nettoyage et création de la table de partitions GPT sur $TARGET_DISK..."
+parted -s "$TARGET_DISK" -- mklabel gpt
+
+echo "Création des partitions (EFI, Swap, Root)..."
+parted -s "$TARGET_DISK" -- mkpart ESP fat32 1MiB ${EFI_END}MiB
+parted -s "$TARGET_DISK" -- set 1 esp on
+parted -s "$TARGET_DISK" -- mkpart swap linux-swap ${EFI_END}MiB ${SWAP_END}MiB
+parted -s "$TARGET_DISK" -- mkpart primary ext4 ${SWAP_END}MiB 100%
+
+echo "Formatage des systèmes de fichiers..."
+mkfs.fat -F 32 -n boot "${TARGET_DISK}${PART_SUFFIX}1"
+mkswap -L swap "${TARGET_DISK}${PART_SUFFIX}2"
+mkfs.ext4 -F -L root "${TARGET_DISK}${PART_SUFFIX}3"
+
+echo "Montage des partitions..."
+swapon "${TARGET_DISK}${PART_SUFFIX}2"
+mount /dev/disk/by-label/root /mnt
+mkdir -p /mnt/boot
+mount /dev/disk/by-label/boot /mnt/boot
 
 echo "Clonage du dépôt de configuration..."
 git clone https://github.com/Quentinnnnn11/TranquilityOS.git /mnt/etc/nixos
