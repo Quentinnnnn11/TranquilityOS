@@ -8,6 +8,7 @@
       ./common/packages.nix
       ./common/print.nix
       ./common/plasmaKiosk.nix
+      ./common/active-directory.nix
     ];
 
   boot.loader.systemd-boot.enable = true;
