@@ -25,6 +25,6 @@
     Pour lancer l'installation personnalisée de TranquilityOS,
     tapez la commande suivante :
     
-        \e[1;32mtranquility-install\e[0m
+        \e[1;32msudo tranquility-install\e[0m
   '';
 }
