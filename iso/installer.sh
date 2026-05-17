@@ -72,6 +72,10 @@ fi
 EFI_END=512
 SWAP_END=$(( EFI_END + (SWAP_GB * 1024) ))
 
+echo "Nettoyage des anciens montages..."
+umount -R /mnt 2>/dev/null || true
+swapoff -a 2>/dev/null || true
+
 echo "Nettoyage et création de la table de partitions GPT sur $TARGET_DISK..."
 parted -s "$TARGET_DISK" -- mklabel gpt
 
@@ -81,10 +85,18 @@ parted -s "$TARGET_DISK" -- set 1 esp on
 parted -s "$TARGET_DISK" -- mkpart swap linux-swap ${EFI_END}MiB ${SWAP_END}MiB
 parted -s "$TARGET_DISK" -- mkpart primary ext4 ${SWAP_END}MiB 100%
 
+echo "Synchronisation de la table de partitions..."
+partprobe "$TARGET_DISK"
+sleep 2
+
 echo "Formatage des systèmes de fichiers..."
 mkfs.fat -F 32 -n boot "${TARGET_DISK}${PART_SUFFIX}1"
 mkswap -L swap "${TARGET_DISK}${PART_SUFFIX}2"
-mkfs.ext4 -F -L root "${TARGET_DISK}${PART_SUFFIX}3"
+mkfs.ext4 -F -q -L root "${TARGET_DISK}${PART_SUFFIX}3"
+
+echo "Attente de l'enregistrement des périphériques..."
+udevadm settle
+sleep2
 
 echo "Montage des partitions..."
 swapon "${TARGET_DISK}${PART_SUFFIX}2"
