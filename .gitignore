@@ -1,0 +1,9 @@
+result
+result-*
+*.iso
+
+local-config.nix
+hardware-configuration.nix
+
+ad-pass.txt
+*.keytab

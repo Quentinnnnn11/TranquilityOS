@@ -9,12 +9,12 @@
       ./common/print.nix
       ./common/plasmaKiosk.nix
       ./common/active-directory.nix
+      (if builtins.pathExists ./local-config.nix then ./local-config.nix else {})
     ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "TranquilityOS";
   networking.networkmanager.enable = true;
 
   time.timeZone = "Europe/Paris";
@@ -29,13 +29,6 @@
     LC_PAPER = "fr_FR.UTF-8";
     LC_TELEPHONE = "fr_FR.UTF-8";
     LC_TIME = "fr_FR.UTF-8";
-  };
-
-  users.users.quentin = {
-    isNormalUser = true;
-    description = "Quentin";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
   };
 
   services.openssh.enable = true;
