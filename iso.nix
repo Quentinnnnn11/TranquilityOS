@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [
@@ -6,16 +6,25 @@
   ];
 
   networking.hostName = "tranquility-installer";
+
+  console.keyMap = "fr";
   
   environment.systemPackages = [
     (pkgs.writeScriptBin "tranquility-install" (builtins.readFile ./iso/installer.sh))
   ];
 
-  services.getty.helpLine = ''
-    Bienvenue sur TranquilityOS !
-    Pour lancer l'installation personnalisée de TranquilityOS,
-    tapez simplement la commande suivante :
+  services.getty.greetingLine = lib.mkForce "";
+
+  services.getty.helpLine = lib.mkForce ''
+    \e[1;36m
+    =================================================================
+               BIENVENUE SUR L'INSTALLATEUR TRANQUILITY OS
+    =================================================================
+    \e[0m
     
-        tranquility-install
+    Pour lancer l'installation personnalisée de TranquilityOS,
+    tapez la commande suivante :
+    
+        \e[1;32mtranquility-install\e[0m
   '';
 }
