@@ -23,7 +23,7 @@ read -p "Voulez-vous joindre cette machine à un domaine Active Directory ? (o/N
 if [[ "$JOIN_AD" =~ ^[oO]$ ]]; then
   echo "--- Configuration Active Directory ---"
   read -p "Domaine Active Directory à rejoindre (ex: tranquility.local) : " AD_DOMAIN
-  read -p "IP du serveur DNS principali (ex: 192.168.1.100) : " AD_DNS_IP
+  read -p "IP du serveur DNS principal (ex: 192.168.1.100) : " AD_DNS_IP
   read -p "Nom du compte AD à utiliser pour la jointure (ex: Administrateur) : " AD_ADMIN
   read -s -p "Mot de passe du compte AD à utiliser pour la jointure (sera supprimé après le premier démarrage) : " AD_ADMIN_PASS
   echo ""
@@ -96,7 +96,7 @@ mkfs.ext4 -F -q -L root "${TARGET_DISK}${PART_SUFFIX}3"
 
 echo "Attente de l'enregistrement des périphériques..."
 udevadm settle
-sleep2
+sleep 2
 
 echo "Montage des partitions..."
 swapon "${TARGET_DISK}${PART_SUFFIX}2"
