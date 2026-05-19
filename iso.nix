@@ -27,4 +27,11 @@
     
         \e[1;32msudo tranquility-install\e[0m
   '';
+
+  boot.kernelParams = [
+    "quiet"
+    "loglevel=3"
+    "systemd.show_status=auto"
+    "rd.udev.log_level=3"
+  ];
 }
