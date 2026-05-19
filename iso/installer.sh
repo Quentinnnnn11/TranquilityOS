@@ -120,7 +120,7 @@ echo "DISQUES DISPONIBLES :"
 lsblk -d -n -o NAME,SIZE,MODEL | grep -v "loop"
 
 echo ""
-echo "\e[31mATTENTION : TOUTES LES DONNÉES DU DISQUE CIBLE SERONT DÉTRUITES !\e[0m\n"
+echo -e "\e[31mATTENTION : TOUTES LES DONNÉES DU DISQUE CIBLE SERONT DÉTRUITES !\e[0m\n"
 echo ""
 read -p "Entrez le nom du disque à formater (ex: sda ou nvme0n1) : " DISK_NAME
 read -p "Voulez-vous activer la prise en charge de l'hibernation ? (O/n) : " HIBERNATION
@@ -213,6 +213,8 @@ nixos-generate-config --root /mnt
 
 echo "Génération de l'identité de la machine..."
 cat <<EOF > /mnt/etc/nixos/local-config.nix
+{ lib, ... }
+
 {
   networking.hostName = "${HOSTNAME}";
 EOF
@@ -220,12 +222,12 @@ EOF
 if [ "$NET_MODE" = "dhcp" ]; then
 cat <<EOF >> /mnt/etc/nixos/local-config.nix
 
-  networking.useDHCP = true;
+  networking.useDHCP = lib.mkForce true;
 EOF
 else
 cat <<EOF >> /mnt/etc/nixos/local-config.nix
 
-  networking.useDHCP = false;
+  networking.useDHCP = lib.mkForce false;
   networking.interfaces.${NET_INT}.ipv4.addresses = [ {
     address = \"${STATIC_IP}\";
     prefixLength = ${STATIC_PRFX};
