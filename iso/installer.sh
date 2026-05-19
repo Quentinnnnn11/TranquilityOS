@@ -115,6 +115,8 @@ echo "==================================================="
 echo "             PARTITIONNEMENT DU DISQUE"
 echo "==================================================="
 echo ""
+echo "Vous allez être amené à séléctionner le disque à formatter."
+echo "Un formattage sera ensuite automatiquement appliqué sur ce disque."
 echo ""
 echo ""
 echo "DISQUES DISPONIBLES :"
@@ -122,9 +124,10 @@ lsblk -d -n -o NAME,SIZE,MODEL | grep -v "loop"
 
 echo ""
 echo "\e[31mATTENTION : TOUTES LES DONNÉES DU DISQUE CIBLE SERONT DÉTRUITES !\e[0m\n"
-exho ""
+echo ""
 read -p "Entrez le nom du disque à formater (ex: sda ou nvme0n1) : " DISK_NAME
 read -p "Voulez-vous activer la prise en charge de l'hibernation ? (O/n) : " HIBERNATION
+echo ""
 
 if [[ $DISK_NAME == *nvme* ]]; then
   PART_SUFFIX="p"
@@ -177,10 +180,20 @@ echo "Synchronisation de la table de partitions..."
 partprobe "$TARGET_DISK"
 sleep 2
 
-echo "Formatage des systèmes de fichiers..."
+echo "Formatage de la partition de boot..."
 mkfs.fat -F 32 -n boot "${TARGET_DISK}${PART_SUFFIX}1"
+
+echo "Initialisation du SWAP..."
 mkswap -L swap "${TARGET_DISK}${PART_SUFFIX}2"
-mkfs.ext4 -F -q -L root "${TARGET_DISK}${PART_SUFFIX}3"
+
+echo "Formatage de la partition principale..."
+echo ""
+read -p "\e[31mAttention : Le mot de passe de déchiffrement du disque va vous être demandé.\e[0m\n"
+echo ""
+ROOT_PART="${TARGET_DISK}${PART_SUFFIX}3"
+cryptsetup luksFormat "$ROOT_PART"
+cryptsetup luksOpen "$ROOT_PART" cryptroot
+mkfs.ext4 -F -q -L root /dev/mapper/cryptroot
 
 echo "Attente de l'enregistrement des périphériques..."
 udevadm settle
