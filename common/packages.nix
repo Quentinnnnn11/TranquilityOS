@@ -71,5 +71,6 @@
     plasma-browser-integration
     elisa
     kate
+    discover
   ];
 }

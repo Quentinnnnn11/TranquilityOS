@@ -12,9 +12,27 @@ echo "=================================================="
 echo "   BIENVENUE SUR L'INSTALLATEUR TRANQUILITY OS"
 echo "=================================================="
 
-read -p "Nom d'hôte (Hostname) de la machine : " HOSTNAME
-read -p "Nom de l'utilisateur local : " USERNAME
-read -s -p "Mot de passe de l'utilisateur local : " USERPASS
+read -p "Nom d'hôte de la machine : " HOSTNAME
+read -p "Nom de l'utilisateur local (administrateur local) local : " USERNAME
+
+while true; do
+  echo "Le mot de passe doit contenir au moins 8 caractères, donc au moins un de chaque type (majuscule, minuscule, chiffre, caractère spécial)."
+  read -s -p "Entrez le mot de passe : " USERPASS
+
+  if ! echo "$USERPASS" | grep -qP '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}'; then
+    echo -e "\e[31mLe mot de passe ne respecte pas les critères de complexité.\e[0m\n"
+    continue
+  fi
+  read -s -p "Confirmez le mot de passe : " USERPASS_CONFIRM
+  echo ""
+
+  if [ "$USERPASS" != "$USERPASS_CONFIRM" ]; then
+    echo -e "\e[31mLes mots de passe ne correspondent pas. Veuillez réessayer.\e[0m\n"
+    continue
+  fi
+
+  break
+done
 echo ""
 
 echo "=================================================="
