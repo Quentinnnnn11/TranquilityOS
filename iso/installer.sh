@@ -220,12 +220,12 @@ EOF
 if [ "$NET_MODE" = "dhcp" ]; then
 cat <<EOF >> /mnt/etc/nixos/local-config.nix
 
-  networking.dhcp = true;
+  networking.useDHCP = true;
 EOF
 else
 cat <<EOF >> /mnt/etc/nixos/local-config.nix
 
-  networking.dhcp = false;
+  networking.useDHCP = false;
   networking.interfaces.${NET_INT}.ipv4.addresses = [ {
     address = \"${STATIC_IP}\";
     prefixLength = ${STATIC_PRFX};
