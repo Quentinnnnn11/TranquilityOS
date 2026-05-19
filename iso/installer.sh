@@ -14,11 +14,17 @@ echo "=================================================="
 
 read -p "Nom d'hôte de la machine : " HOSTNAME
 read -p "Nom de l'utilisateur local (administrateur local) local : " USERNAME
-
+echo ""
+echo "Le mot de passe doit contenir au moins 8 caractères, et doit être composé de :"
+echo "  - au moins une lettre majuscule"
+echo "  - au moins une lettre minuscule"
+echo "  - au moins un chiffre"
+echo "  - au moins un caractère spécial"
+echo ""
 while true; do
-  echo "Le mot de passe doit contenir au moins 8 caractères, donc au moins un de chaque type (majuscule, minuscule, chiffre, caractère spécial)."
   read -s -p "Entrez le mot de passe : " USERPASS
-
+  echo ""
+  
   if ! echo "$USERPASS" | grep -qP '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}'; then
     echo -e "\e[31mLe mot de passe ne respecte pas les critères de complexité.\e[0m\n"
     continue
