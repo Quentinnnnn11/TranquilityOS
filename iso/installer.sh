@@ -213,7 +213,7 @@ nixos-generate-config --root /mnt
 
 echo "Génération de l'identité de la machine..."
 cat <<EOF > /mnt/etc/nixos/local-config.nix
-{ lib, ... }
+{ lib, ... }:
 
 {
   networking.hostName = "${HOSTNAME}";
