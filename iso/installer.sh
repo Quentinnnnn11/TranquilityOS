@@ -65,12 +65,10 @@ while true; do
   case "$NET_CHOICE" in
     1)
       NET_MODE="dhcp"
-      echo -e "\e[32mMode DHCP sélectionné.\e[0m\n"
       break
       ;;
     2)
       NET_MODE="static"
-      echo -e "\e[32mMode IP Fixe sélectionné.\e[0m\n"
       echo ""
       echo "Interfaces réseau détectées sur cette machine :"
       ip -br link | grep -v "lo" | awk '{print "  - " $1 " (" $2 ")"}'
@@ -187,10 +185,10 @@ mkswap -L swap "${TARGET_DISK}${PART_SUFFIX}2"
 
 echo "Formatage de la partition principale..."
 echo ""
-echo -e "\e[31mAttention : Le mot de passe de déchiffrement du disque va vous être demandé.\e[0m\n"
+echo -e "\e[31mAttention : Le mot de passe de déchiffrement du disque va vous être demandé à plusieurs reprises.\e[0m\n"
 echo ""
 ROOT_PART="${TARGET_DISK}${PART_SUFFIX}3"
-cryptsetup luksFormat "$ROOT_PART"
+cryptsetup -q luksFormat "$ROOT_PART"
 cryptsetup luksOpen "$ROOT_PART" cryptroot
 mkfs.ext4 -F -q -L root /dev/mapper/cryptroot
 
@@ -220,12 +218,12 @@ cat <<EOF > /mnt/etc/nixos/local-config.nix
 EOF
 
 if [ "$NET_MODE" = "dhcp" ]; then
-cat <<EOF > /mnt/etc/nixos/local-config.nix
+cat <<EOF >> /mnt/etc/nixos/local-config.nix
 
   networking.dhcp = true;
 EOF
 else
-cat <<EOF > /mnt/etc/nixos/local-config.nix
+cat <<EOF >> /mnt/etc/nixos/local-config.nix
 
   networking.dhcp = false;
   networking.interfaces.${NET_INT}.ipv4.addresses = [ {
