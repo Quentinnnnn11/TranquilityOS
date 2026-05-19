@@ -229,11 +229,11 @@ cat <<EOF >> /mnt/etc/nixos/local-config.nix
 
   networking.useDHCP = lib.mkForce false;
   networking.interfaces.${NET_INT}.ipv4.addresses = [ {
-    address = \"${STATIC_IP}\";
+    address = "${STATIC_IP}";
     prefixLength = ${STATIC_PRFX};
   } ];
-  networking.defaultGateway = \"${STATIC_GW}\";
-  networking.nameservers = [ \"${STATIC_DNS}\" ];"
+  networking.defaultGateway = "${STATIC_GW}";
+  networking.nameservers = [ "${STATIC_DNS}" ];
 EOF
 fi
 
