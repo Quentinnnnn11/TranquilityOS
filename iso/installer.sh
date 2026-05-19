@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+
+#SUDO !
 if [ "$EUID" -ne 0 ]; then
   echo "Erreur : Ce script modifie les disques et doit être exécuté en tant qu'administrateur."
   echo "Veuillez relancer la commande avec sudo :"
@@ -11,11 +13,16 @@ fi
 echo "=================================================="
 echo "   BIENVENUE SUR L'INSTALLATEUR TRANQUILITY OS"
 echo "=================================================="
+echo ""
+echo ""
+echo ""
 
+
+#BASIC
 read -p "Nom d'hôte de la machine : " HOSTNAME
 read -p "Nom de l'utilisateur local (administrateur local) local : " USERNAME
 echo ""
-echo "Le mot de passe doit contenir au moins 8 caractères, et doit être composé de :"
+echo "Le mot de passe doit contenir au moins 12 caractères, et doit être composé de :"
 echo "  - au moins une lettre majuscule"
 echo "  - au moins une lettre minuscule"
 echo "  - au moins un chiffre"
@@ -24,8 +31,8 @@ echo ""
 while true; do
   read -s -p "Entrez le mot de passe : " USERPASS
   echo ""
-  
-  if ! echo "$USERPASS" | grep -qP '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}'; then
+
+  if ! echo "$USERPASS" | grep -qP '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{12,}'; then
     echo -e "\e[31mLe mot de passe ne respecte pas les critères de complexité.\e[0m\n"
     continue
   fi
@@ -39,28 +46,85 @@ while true; do
 
   break
 done
-echo ""
 
+
+#RESEAU
+clear
 echo "=================================================="
-read -p "Voulez-vous joindre cette machine à un domaine Active Directory ? (o/N) : " JOIN_AD
+echo "               CONFIGURATION RESEAU"
+echo "=================================================="
+echo ""
+echo ""
+echo ""
+echo "Choisissez le mode de configuration réseau :"
+echo "1) DHCP (Configuration automatique)"
+echo "2) IP Fixe (Configuration statique)"
+
+while true; do
+  read -p "Votre choix : " NET_CHOICE
+  case "$NET_CHOICE" in
+    1)
+      NET_MODE="dhcp"
+      echo -e "\e[32mMode DHCP sélectionné.\e[0m\n"
+      break
+      ;;
+    2)
+      NET_MODE="static"
+      echo -e "\e[32mMode IP Fixe sélectionné.\e[0m\n"
+      echo ""
+      echo "Interfaces réseau détectées sur cette machine :"
+      ip -br link | grep -v "lo" | awk '{print "  - " $1 " (" $2 ")"}'
+      echo ""
+      
+      read -p "Entrez le nom de l'interface à configurer (ex: enp0s3, eth0) : " NET_INT
+      read -p "Adresse IP : " STATIC_IP
+      read -p "Préfixe réseau CIDR (ex: 24 pour un masque 255.255.255.0) : " STATIC_PRFX
+      read -p "Adresse IP de la passerelle par défaut : " STATIC_GW
+      read -p "Adresse IP du serveur DNS : " STATIC_DNS
+      break
+      ;;
+    *)
+      echo -e "\e[31mChoix invalide. Veuillez réessayer.\e[0m\n"
+      ;;
+  esac
+done
+
+
+#AD
+clear
+echo "=================================================="
+echo "          CONFIGURATION ACTIVE DIRECTORY"
+echo "=================================================="
+echo ""
+echo ""
+echo ""
+read -p "Voulez-vous joindre cette machine à un domaine Active Directory ? (O/n) : " JOIN_AD
 
 if [[ "$JOIN_AD" =~ ^[oO]$ ]]; then
   echo "--- Configuration Active Directory ---"
   read -p "Domaine Active Directory à rejoindre (ex: tranquility.local) : " AD_DOMAIN
-  read -p "IP du serveur DNS principal (ex: 192.168.1.100) : " AD_DNS_IP
+  read -p "Adresse IP du serveur DNS lié à l'AD : " AD_DNS_IP
   read -p "Nom du compte AD à utiliser pour la jointure (ex: Administrateur) : " AD_ADMIN
   read -s -p "Mot de passe du compte AD à utiliser pour la jointure (sera supprimé après le premier démarrage) : " AD_ADMIN_PASS
-  echo ""
 fi
 
-echo "=================================================="
+
+#DISQUES
+clear
+echo "==================================================="
+echo "             PARTITIONNEMENT DU DISQUE"
+echo "==================================================="
+echo ""
+echo ""
+echo ""
 echo "DISQUES DISPONIBLES :"
 lsblk -d -n -o NAME,SIZE,MODEL | grep -v "loop"
 
 echo ""
-echo "ATTENTION : TOUTES LES DONNÉES DU DISQUE CIBLE SERONT DÉTRUITES !"
+echo "\e[31mATTENTION : TOUTES LES DONNÉES DU DISQUE CIBLE SERONT DÉTRUITES !\e[0m\n"
+exho ""
 read -p "Entrez le nom du disque à formater (ex: sda ou nvme0n1) : " DISK_NAME
-read -p "Voulez-vous activer la prise en charge de l'hibernation ? (o/N) : " HIBERNATION
+read -p "Voulez-vous activer la prise en charge de l'hibernation ? (O/n) : " HIBERNATION
 
 if [[ $DISK_NAME == *nvme* ]]; then
   PART_SUFFIX="p"
@@ -128,6 +192,8 @@ mount /dev/disk/by-label/root /mnt
 mkdir -p /mnt/boot
 mount /dev/disk/by-label/boot /mnt/boot
 
+
+#CONFIGURATION
 echo "Clonage du dépôt de configuration..."
 rm -rf /mnt/etc/nixos
 git clone https://github.com/Quentinnnnn11/TranquilityOS.git /mnt/etc/nixos
@@ -139,13 +205,26 @@ echo "Génération de l'identité de la machine..."
 cat <<EOF > /mnt/etc/nixos/local-config.nix
 {
   networking.hostName = "${HOSTNAME}";
-
-  users.users.${USERNAME} = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
-    initialPassword = "${USERPASS}";
-  };
 EOF
+
+if [ "$NET_MODE" = "dhcp" ]; then
+cat <<EOF > /mnt/etc/nixos/local-config.nix
+
+  networking.dhcp = true;
+EOF
+else
+cat <<EOF > /mnt/etc/nixos/local-config.nix
+
+  networking.dhcp = false;
+  networking.interfaces.${NET_INT}.ipv4.addresses = [ {
+    address = \"${STATIC_IP}\";
+    prefixLength = ${STATIC_PRFX};
+  } ];
+  networking.defaultGateway = \"${STATIC_GW}\";
+  networking.nameservers = [ \"${STATIC_DNS}\" ];"
+EOF
+fi
+
 
 if [[ "$JOIN_AD" =~ ^[oO]$ ]]; then
 cat <<EOF >> /mnt/etc/nixos/local-config.nix
@@ -158,6 +237,12 @@ EOF
 fi
 
 cat <<EOF >> /mnt/etc/nixos/local-config.nix
+
+  users.users.${USERNAME} = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" ];
+    initialPassword = "${USERPASS}";
+  };
 }
 EOF
 
@@ -173,6 +258,8 @@ git add -f hardware-configuration.nix
 git add -f local-config.nix
 cd -
 
+
+#INSTALLATION
 echo "Lancement de la compilation du système..."
 nixos-install --no-root-passwd --flake /mnt/etc/nixos#TranquilityOS
 
