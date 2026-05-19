@@ -101,7 +101,6 @@ echo ""
 read -p "Voulez-vous joindre cette machine à un domaine Active Directory ? (O/n) : " JOIN_AD
 
 if [[ "$JOIN_AD" =~ ^[oO]$ ]]; then
-  echo "--- Configuration Active Directory ---"
   read -p "Domaine Active Directory à rejoindre (ex: tranquility.local) : " AD_DOMAIN
   read -p "Adresse IP du serveur DNS lié à l'AD : " AD_DNS_IP
   read -p "Nom du compte AD à utiliser pour la jointure (ex: Administrateur) : " AD_ADMIN
@@ -188,7 +187,7 @@ mkswap -L swap "${TARGET_DISK}${PART_SUFFIX}2"
 
 echo "Formatage de la partition principale..."
 echo ""
-read -p "\e[31mAttention : Le mot de passe de déchiffrement du disque va vous être demandé.\e[0m\n"
+echo -e "\e[31mAttention : Le mot de passe de déchiffrement du disque va vous être demandé.\e[0m\n"
 echo ""
 ROOT_PART="${TARGET_DISK}${PART_SUFFIX}3"
 cryptsetup luksFormat "$ROOT_PART"
