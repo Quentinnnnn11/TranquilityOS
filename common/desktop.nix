@@ -30,21 +30,6 @@ in
     Comment=Applique le fond d'écran par défaut à la création du profil
   '';
 
-  environment.etc."xdg/menus/applications-merged/lasuite.menu".text = ''
-    <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
-      "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
-    <Menu>
-      <Name>Applications</Name>
-      <Menu>
-        <Name>LaSuite</Name> 
-        <Directory>lasuite.directory</Directory>
-        <Include>
-          <Category>LaSuite</Category>
-        </Include>
-      </Menu>
-    </Menu>
-  '';
-
   console.keyMap = "fr";
   services.xserver.xkb = {
     layout = "fr";
