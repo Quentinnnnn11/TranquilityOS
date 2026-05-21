@@ -74,6 +74,7 @@
   };
   fileSystems."/home" = {
     device = "/home";
+    fsType = "none";
     options = [ "bind" "nosuid" "nodev" ];
     depends = [ "/" ];
   };
