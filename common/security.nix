@@ -47,6 +47,6 @@
     "kernel.sysrq" = 0;
     "kernel.unprivileged_bpf_disabled" = 1;
     "kernel.panic_on_oops" = 1;
-    "kernel.yama.ptrace_scope" = 1;
+    "kernel.yama.ptrace_scope" = 2;
   };
 }
