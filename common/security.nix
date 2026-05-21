@@ -99,4 +99,13 @@
     options = [ "bind" "nosuid" "nodev" "noexec" ];
     depends = [ "/" ];
   };
+
+  # https://messervices.cyber.gouv.fr/documents-guides/fr_np_linux_configuration-v2.0.pdf
+  # 6.3.1 - R36
+  environment.shellInit = ''
+    umask 0077
+  '';
+  systemd.extraConfig = ''
+    DefaultUMask=0027
+  '';
 }
