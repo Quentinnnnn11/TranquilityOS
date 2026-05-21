@@ -105,7 +105,7 @@
   environment.shellInit = ''
     umask 0077
   '';
-  systemd.extraConfig = ''
-    DefaultUMask=0027
-  '';
+  systemd.settings.Manager = {
+    DefaultUMask = "0027";
+  };
 }
