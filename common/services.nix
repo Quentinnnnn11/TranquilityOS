@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 {
+  # ORPHELINS
   systemd.services.audit-fichiers-orphelins = {
     description = "Recherche des fichiers sans propriétaire";
     
@@ -24,6 +25,45 @@
     wantedBy = [ "timers.target" ];
     timerConfig = {
       OnCalendar = "*-*-* 02:00:00";
+      Persistent = true; 
+    };
+  };
+
+  # UPDATES
+  systemd.services.tranquility-upgrade = {
+    description = "Mise a jour automatique de TranquilityOS";
+
+    path = with pkgs; [
+      coreutils
+      git
+      nix
+      config.system.build.nixos-rebuild
+    ];
+    
+    script = ''
+      echo "Début de la mise à jour automatique..."
+      
+      cd /etc/nixos
+      
+      echo "Synchronisation avec le dépôt Git..."
+      git pull origin main
+      
+      echo "Recompilation de Tranquility OS..."
+      nixos-rebuild switch --flake .#TranquilityOS
+      
+      echo "Mise à jour terminée avec succès !"
+    '';
+    
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+    };
+  };
+
+  systemd.timers.tranquility-upgrade = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "Mon *-*-* 04:00:00";
       Persistent = true; 
     };
   };
