@@ -66,9 +66,12 @@
     fsType = "tmpfs";
     options = [ "nosuid" "nodev" "noexec" "mode=1777" ];
   };
-  fileSystems."/boot".options = [ "nosuid" "nodev" "noexec" ];
+  fileSystems."/boot" = {
+    options = [ "nosuid" "nodev" "noexec" ];
+  };
   fileSystems."/var/tmp" = {
     device = "/var/tmp";
+    fsType = "none";
     options = [ "bind" "nosuid" "nodev" "noexec" ];
     depends = [ "/" ];
   };
@@ -80,16 +83,19 @@
   };
   fileSystems."/var" = {
     device = "/var";
+    fsType = "none";
     options = [ "bind" "nosuid" "nodev" ];
     depends = [ "/" ];
   };
   fileSystems."/var/log" = {
     device = "/var/log";
+    fsType = "none";
     options = [ "bind" "nosuid" "nodev" "noexec" ];
     depends = [ "/var" ]; 
   };
   fileSystems."/srv" = {
     device = "/srv";
+    fsType = "none";
     options = [ "bind" "nosuid" "nodev" "noexec" ];
     depends = [ "/" ];
   };
