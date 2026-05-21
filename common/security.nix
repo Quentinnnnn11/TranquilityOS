@@ -53,4 +53,43 @@
     "fs.protected_symlinks" = 1;
     "fs.protected_hardlinks" = 1;
   };
+
+  # https://messervices.cyber.gouv.fr/documents-guides/fr_np_linux_configuration-v2.0.pdf
+  # 6.1 - R28
+  fileSystems."/proc" = {
+    device = "proc";
+    fsType = "proc";
+    options = [ "hidepid=2" ];
+  };
+  fileSystems."/tmp" = {
+    device = "tmpfs";
+    fsType = "tmpfs";
+    options = [ "nosuid" "nodev" "noexec" "mode=1777" ];
+  };
+  fileSystems."/boot".options = [ "nosuid" "nodev" "noexec" ];
+  fileSystems."/var/tmp" = {
+    device = "/var/tmp";
+    options = [ "bind" "nosuid" "nodev" "noexec" ];
+    depends = [ "/" ];
+  };
+  fileSystems."/home" = {
+    device = "/home";
+    options = [ "bind" "nosuid" "nodev" ];
+    depends = [ "/" ];
+  };
+  fileSystems."/var" = {
+    device = "/var";
+    options = [ "bind" "nosuid" "nodev" ];
+    depends = [ "/" ];
+  };
+  fileSystems."/var/log" = {
+    device = "/var/log";
+    options = [ "bind" "nosuid" "nodev" "noexec" ];
+    depends = [ "/var" ]; 
+  };
+  fileSystems."/srv" = {
+    device = "/srv";
+    options = [ "bind" "nosuid" "nodev" "noexec" ];
+    depends = [ "/" ];
+  };
 }
