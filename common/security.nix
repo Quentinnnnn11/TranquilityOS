@@ -19,7 +19,7 @@
   };
 
   # https://messervices.cyber.gouv.fr/documents-guides/fr_np_linux_configuration-v2.0.pdf
-  # 5.2.1 - R8
+  # 5.2.1 - R8, R10
   boot.kernelParams = [
     "pti=on"
     "spectre_v2=on"
@@ -31,10 +31,11 @@
     "mce=0"
     "rng_core.default_quality=500"
     "mds=full"
+    "security=yama"
   ];
 
   # https://messervices.cyber.gouv.fr/documents-guides/fr_np_linux_configuration-v2.0.pdf
-  # 5.2.2 - R9
+  # 5.2.2 - R9, R10
   boot.kernel.sysctl = {
     "kernel.dmesg_restrict" = 1;
     "kernel.kptr_restrict" = 2;
@@ -46,5 +47,6 @@
     "kernel.sysrq" = 0;
     "kernel.unprivileged_bpf_disabled" = 1;
     "kernel.panic_on_oops" = 1;
+    "kernel.yama.ptrace_scope" = 1;
   };
 }
