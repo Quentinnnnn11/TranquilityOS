@@ -114,7 +114,6 @@
   security.apparmor = {
     enable = true;
     enableCache = true;
-    killUnconfinedTcp = false; 
   };
   services.dbus.apparmor = "enabled";
 }
