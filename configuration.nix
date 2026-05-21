@@ -10,6 +10,8 @@
       ./common/plasmaKiosk.nix
       ./common/active-directory.nix
       ./common/security.nix
+      ./common/admins.nix
+      ./common/services.nix
       (if builtins.pathExists ./local-config.nix then ./local-config.nix else {})
     ];
 
