@@ -19,7 +19,6 @@
     libqalculate
     noisetorch #reduction de bruit pour micro
     gnome-power-manager
-    chromium
     bitwarden-desktop
 
     #LaSuite
@@ -80,6 +79,22 @@
 
       PasswordManagerEnabled = false;
       OfferToSaveLogins = false;
+    };
+  };
+
+  #Chromium
+  programs.chromium = {
+    enable = true;
+    extraOpts = {
+      "PasswordManagerEnabled" = false;
+      "BuiltInDataProtectionEnabled" = true;
+      "BackgroundModeEnabled" = false;<
+      "ExtensionSettings" = {
+        "nngcegbndfabmmeihmeidfgbbchkiobe" = {
+          "installation_mode" = "force_installed";
+          "update_url" = "https://clients2.google.com/service/update2/crx";
+        };
+      };
     };
   };
 
