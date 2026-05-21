@@ -9,6 +9,7 @@
       ./common/print.nix
       ./common/plasmaKiosk.nix
       ./common/active-directory.nix
+      ./common/security.nix
       (if builtins.pathExists ./local-config.nix then ./local-config.nix else {})
     ];
 
