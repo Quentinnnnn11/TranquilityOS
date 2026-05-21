@@ -10,7 +10,6 @@
     curl
     htop
     thunderbird
-    firefox
     remmina #RDP
     p7zip
     unzip
@@ -21,6 +20,7 @@
     noisetorch #reduction de bruit pour micro
     gnome-power-manager
     chromium
+    bitwarden-desktop
 
     #LaSuite
     (makeDesktopItem {
@@ -66,6 +66,22 @@
       categories = [ "Utility" ];
     })
   ];
+
+  #Firefox
+  programs.firefox = {
+    enable = true;
+    policies = {
+      ExtensionSettings = {
+        "{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
+          installation_mode = "force_installed";
+        };
+      };
+
+      PasswordManagerEnabled = false;
+      OfferToSaveLogins = false;
+    };
+  };
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     plasma-browser-integration
