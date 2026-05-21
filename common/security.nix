@@ -108,4 +108,13 @@
   systemd.settings.Manager = {
     DefaultUMask = "0027";
   };
+
+  # https://messervices.cyber.gouv.fr/documents-guides/fr_np_linux_configuration-v2.0.pdf
+  # 6.3.1 - R37
+  security.apparmor = {
+    enable = true;
+    enableCache = true;
+    killUnconfinedTcp = false; 
+  };
+  services.dbus.apparmor = "enabled";
 }
