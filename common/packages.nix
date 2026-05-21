@@ -88,7 +88,7 @@
     extraOpts = {
       "PasswordManagerEnabled" = false;
       "BuiltInDataProtectionEnabled" = true;
-      "BackgroundModeEnabled" = false;<
+      "BackgroundModeEnabled" = false;
       "ExtensionSettings" = {
         "nngcegbndfabmmeihmeidfgbbchkiobe" = {
           "installation_mode" = "force_installed";
