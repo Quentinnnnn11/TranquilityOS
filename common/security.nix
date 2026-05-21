@@ -34,7 +34,7 @@
   ];
 
   # https://messervices.cyber.gouv.fr/documents-guides/fr_np_linux_configuration-v2.0.pdf
-  # 5.2.2 - R9, R10
+  # 5.2.2 - R9, R10, R11, R14
   boot.kernel.sysctl = {
     "kernel.dmesg_restrict" = 1;
     "kernel.kptr_restrict" = 2;
@@ -47,5 +47,10 @@
     "kernel.unprivileged_bpf_disabled" = 1;
     "kernel.panic_on_oops" = 1;
     "kernel.yama.ptrace_scope" = 2; #si utilisateurs dev, passer à 1
+    "fs.suid_dumpable" = 0;
+    "fs.protected_fifos" = 2;
+    "fs.protected_regular" = 2;
+    "fs.protected_symlinks" = 1;
+    "fs.protected_hardlinks" = 1;
   };
 }
