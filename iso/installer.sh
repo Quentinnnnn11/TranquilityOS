@@ -47,6 +47,11 @@ while true; do
   break
 done
 
+USERHASH=$(nix-shell -p mkpasswd --run "echo '$USERPASS' | mkpasswd -m sha-512 -s")
+
+unset USERPASS
+unset USERPASS_CONFIRM
+
 
 #RESEAU
 clear
@@ -253,7 +258,7 @@ cat <<EOF >> /mnt/etc/nixos/local-config.nix
   users.users.${USERNAME} = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ];
-    initialPassword = "${USERPASS}";
+    hashedPassword = "${USERHASH}";
   };
 }
 EOF
