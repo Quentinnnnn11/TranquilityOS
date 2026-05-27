@@ -16,7 +16,7 @@
         groups = [ "gg_linux_admins" ]; 
         commands = [
           {
-            command = "${pkgs.systemd}/bin/systemctl status \"\"";
+            command = "${pkgs.ls}/bin/ls -la /root";
             options = [ "NOEXEC" ];
           }
         ];
