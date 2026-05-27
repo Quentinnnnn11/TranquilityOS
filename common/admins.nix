@@ -4,7 +4,7 @@
   security.sudo = {
     enable = true;
     
-    execWheelOnly = true; 
+    execWheelOnly = false; 
 
     extraRules = [
       {
