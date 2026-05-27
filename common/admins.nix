@@ -12,15 +12,15 @@
         commands = [ { command = "ALL"; options = [ "SETENV" ]; } ];
       }
 
-      # {
-      #   groups = [ "gg_linux_admins" ]; 
-      #   commands = [
-      #     {
-      #       command = "/run/current-system/sw/bin/ls -la /root";
-      #       options = [ "NOEXEC" ];
-      #     }
-      #   ];
-      # }
+      {
+        groups = [ "gg_linux_admins" ]; 
+        commands = [
+          {
+            command = "${pkgs.coreutils}/bin/ls -la /root";
+            options = [ "NOEXEC" ];
+          }
+        ];
+      }
     ];
   };
 }
