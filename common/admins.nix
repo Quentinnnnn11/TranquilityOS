@@ -16,7 +16,7 @@
         groups = [ "gg_linux_admins" ]; 
         commands = [
           {
-            command = "${pkgs.coreutils}/bin/ls -la /root";
+            command = "/run/current-system/sw/bin/ls -la /root";
             options = [ "NOEXEC" ];
           }
         ];
