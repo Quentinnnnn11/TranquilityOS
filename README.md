@@ -6,11 +6,11 @@ L'objectif de ce projet est de fournir une alternative robuste à Windows pour l
 ## Fonctionnalités Principales
 - **Architecture Flake-based :** Configuration globale 100 % reproductible et versionnée.
 
-- **Déploiement Agnostique :** Le code centralisé ne contient aucune configuration matérielle spécifique, permettant un déploiement sur n'importe quel type de poste (Fixe, Portable, VM).
+- **Déploiement Agnostique :** Le code centralisé ne contient aucune configuration matérielle spécifique, permettant un déploiement sur n'importe quel type de poste (Fixe, Portable, VM; Intel, ADM).
 
 - **Installateur Interactif Personnalisé :** Une image ISO maison embarquant un script de déploiement.
 
-- **Intégration Active Directory à la demande :** Un module maison (tranquility.ad) permet de joindre un domaine via SSSD et adcli directement lors de l'installation.
+- **Intégration Active Directory à la demande :** Un module maison (tranquility.ad) permet de joindre un domaine via SSSD et adcli automatiquement lors de l'installation.
 
 ## Structure du Dépôt
 ```bash
@@ -19,10 +19,13 @@ TranquilityOS/
 │   └── wallpaper.png
 ├── common
 │   ├── active-directory.nix    # Module maison pour la gestion SSSD/Kerberos
+│   ├── admins.nix              # Configuration des droits sudo 
 │   ├── desktop.nix             # Paramètres de l'environnement de bureau KDE Plasma
 │   ├── packages.nix            # Définition des packets installés
 │   ├── plasmaKiosk.nix         # Paramètres de verrouillage de KDE Plasma
-│   └── print.nix               # Définition des drivers d'impression
+│   ├── print.nix               # Définition des drivers d'impression
+│   ├── security.nix            # Définition des principales règles et options de sécurité
+│   └── services.nix            # Définition des services maison
 ├── iso/
 │   └── installer.sh            # Script d'installation interactif en Bash
 ├── configuration.nix           # Paramètres communs du système d'exploitation
