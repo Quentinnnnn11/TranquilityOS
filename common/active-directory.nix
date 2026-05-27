@@ -25,7 +25,7 @@ in
 
     # DNS
     networking.search = [ cfg.domain ];
-    networking.networkmanager.insertNameservers = [ cfg.dnsIp ]; 
+    networking.nameservers = mkForce [ cfg.dnsIp ]; 
 
     # OUTILS AD
     environment.systemPackages = with pkgs; [ adcli sssd krb5 ];
