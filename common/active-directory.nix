@@ -25,7 +25,8 @@ in
 
     # DNS
     networking.search = [ cfg.domain ];
-    networking.nameservers = mkForce [ cfg.dnsIp ]; 
+    networking.nameservers = [ cfg.dnsIp ];
+    networking.networkmanager.dns = "none"
 
     # OUTILS AD
     environment.systemPackages = with pkgs; [ adcli sssd krb5 ];
@@ -57,8 +58,8 @@ in
     systemd.services.adcli-auto-join = {
       description = "Enrolement automatique à l'AD";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ];
-      wants = [ "network-online.target" ];
+      after = [ "network-online.target" "nss-lookup.target" ];
+      wants = [ "network-online.target" "nss-lookup.target" ];
       unitConfig = {
         ConditionPathExists = "!/etc/krb5.keytab";
       };    
