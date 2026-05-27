@@ -26,7 +26,7 @@ in
     # DNS
     networking.search = [ cfg.domain ];
     networking.nameservers = [ cfg.dnsIp ];
-    networking.networkmanager.dns = "none"
+    networking.networkmanager.dns = "none";
 
     # OUTILS AD
     environment.systemPackages = with pkgs; [ adcli sssd krb5 ];
