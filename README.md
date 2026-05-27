@@ -32,47 +32,35 @@ TranquilityOS/
 
 Note : Des fichiers "local-config.nix" et "hardware-configuration.nix" sont générés à la volée sur les machines clientes et ne sont pas suivis par Git.
 
-## Générer l'ISO d'Installation
-Pour compiler l'image d'installation de Tranquility OS depuis un environnement NixOS :
-
-1. Clonez ce dépôt :
-    ```bash
-    git clone https://github.com/Quentinnnnn11/TranquilityOS.git
-    cd TranquilityOS
-    ```
-2. Lancez la compilation de l'ISO :
-    ```Bash
-    nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage -I nixos-config=iso.nix
-    ```
-3. L'image générée se trouvera dans le dossier result/iso/. Vous pouvez la flasher sur une clé USB (via Ventoy, BalenaEtcher, dd, ...).
-
 ## Processus d'Installation (Client)
-1. Démarrez la machine cible sur la clé USB Tranquility OS.
+1. Démarrez la machine sur une clé USB avec l'ISO Tranquility OS monté au préalable.
 
 2. Une fois sur l'écran d'accueil, lancez l'installateur avec les droits d'administration :
     ```Bash
     sudo tranquility-install
     ```
 
-3. Suivez l'assistant interactif qui vous demandera :
-    - Le nom de la machine et la création du compte local de secours.   
+3. Suivez l'assistant interactif qui vous demandera des informations de base telles que :
+    - Le nom de la machine et la création du compte administrateur local.
+    - La configuration réseau.   
     - La volonté de rejoindre (ou non) un domaine Active Directory.
     - Le disque cible à formater et le choix d'activer l'hibernation.
 
-4. Le script se charge du partitionnement, du clonage du dépôt et de l'installation.
-Une fois terminé, redémarrez, et la machine est **prête** et **enrôlée**.
+> Note : Ce script d'installation est personnalisable à 100% afin de répondre aux besoins des différents clients. Ainsi, ce script peut être automatisé à 100%.
+
+4. Le script se charge de la configuration, du clonage du dépôt et de l'installation.
+Une fois terminé, redémarrez, et la machine est **opérationnelle**.
 
 ## Mise à jour du Parc
-Une fois les machines déployées, les mises à jour du système d'exploitation (ajout d'un logiciel, modification des règles de sécurité) se font simplement en modifiant ce dépôt Git.
+Une fois les machines déployées, les mises à jour du système d'exploitation (ajout d'un logiciel, modification des règles de sécurité) se font simplement en modifiant le dépôt Git.
 
-Sur une machine cliente, il suffit de tirer les modifications et de recompiler :
+Par défaut, les machines clientes se mettent automatiquement à jour tous les lundi matin à la première connexion.
 
-```Bash
-sudo cd /etc/nixos
-sudo git pull origin main
-sudo nixos-rebuild switch --flake .#TranquilityOS
-```
-
-## Reste à faire
-- garbage collector
-- maj auto
+> Note : Il est possible de forcer la mise à jour sur une machine en lancant les commandes suivantes (connecté en administrateur local) :
+> ```Bash
+> sudo cd /etc/nixos
+> sudo git pull origin main
+> sudo nixos-rebuild switch --flake .#TranquilityOS
+> ```
+> Cela aura pour effet de récupérer la nouvelle configuration sur Github et de recompiler le système.
+> Pas besoin de redémarrer, à la fin de l'execution de la commande, le système sera à jour.
